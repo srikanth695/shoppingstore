@@ -6,9 +6,39 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <h2>Your Orders</h2>
-    <button onclick="deleteAllOrders()">Delete All Orders</button>
+    <div class="header">
+        <h2>Your Orders</h2>
+        <div class="nav-buttons">
+            <button class="btn-nav" onclick="showUserDetails()">👤 User Details</button>
+            <button class="btn-nav" onclick="window.location.href='products.html'">← Back to Products</button>
+        </div>
+    </div>
+    
+    <!-- User Details Modal -->
+    <div id="user-details-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeUserDetails()">&times;</span>
+            <h3>User Details</h3>
+            <div id="user-info">
+                <p><strong>Username:</strong> <span id="user-username">--</span></p>
+                <p><strong>Email:</strong> <span id="user-email">--</span></p>
+                <p><strong>Account Created:</strong> <span id="user-created">--</span></p>
+                <p><strong>Total Orders:</strong> <span id="user-orders-count">--</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <h3>Orders History</h3>
     <ul id="orders-list"></ul>
+    
+    <!-- Order Details Modal -->
+    <div id="order-details-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeOrderDetails()">&times;</span>
+            <h3>Order Details</h3>
+            <div id="order-details-content"></div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", loadOrders);

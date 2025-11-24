@@ -5,11 +5,12 @@ A simple yet functional e-commerce shopping cart application built with Flask (P
 ## Features
 
 - ✅ User Authentication (Signup/Login)
+- ✅ User Profile & Details View
 - ✅ Product Catalog with Images
 - ✅ Shopping Cart Management
 - ✅ Quantity Control with Dynamic Price Updates
 - ✅ Order Placement & Confirmation
-- ✅ Order History View
+- ✅ Order History with Item Details View
 - ✅ Session-based Cart Management
 - ✅ SQLite Database
 
@@ -163,12 +164,26 @@ shoppingstore/
   - Total Amount
   - Date Placed
   - Number of Items
+- Click "View Items" to see order details:
+  - Product IDs ordered
+  - Quantity per item
+  - Unit price
+  - Item subtotals
+
+### 9. View User Profile
+- On Orders page, click "User Details" button
+- See profile information:
+  - Username
+  - Email address
+  - Account creation date
+  - Total orders placed
 
 ## API Endpoints
 
 ### Authentication
 - `POST /signup` - Create new user account
 - `POST /login` - User login
+- `GET /user/profile` - Get logged-in user profile details
 
 ### Products
 - `GET /products` - Get all products

@@ -68,6 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (response.ok && data.user_id && data.message === "login successful") {
                     alert("Login successful! Redirecting to products...");
                     localStorage.setItem("user_id", data.user_id);
+                    localStorage.setItem("user_username", data.username);
+                    if (data.email) localStorage.setItem("user_email", data.email);
                     window.location.href = "products.html";
                 } else {
                     alert(data.error || "Login failed. Please try again.");
@@ -241,16 +243,99 @@ async function loadOrders() {
         
         ordersList.innerHTML = orders.map(order => `
             <li class="order-item">
-                <strong>Order #${order.order_id}</strong> - Status: ${order.status}<br>
-                Total: $${Number(order.total).toFixed(2)}<br>
-                Date: ${new Date(order.created_at).toLocaleDateString()}<br>
-                <small>Items: ${order.items ? order.items.length : 0}</small>
+                <div class="order-header">
+                    <strong>Order #${order.order_id}</strong> - Status: <span class="status-badge">${order.status}</span>
+                </div>
+                <div class="order-details">
+                    <p>Total: $${Number(order.total).toFixed(2)}</p>
+                    <p>Date: ${new Date(order.created_at).toLocaleDateString()}</p>
+                    <p>Items: ${order.items ? order.items.length : 0}</p>
+                </div>
+                <button class="btn-small" onclick="viewOrderDetails(${order.order_id})">View Items</button>
             </li>
         `).join("");
     } catch (err) {
         console.error("Error loading orders:", err);
         ordersList.innerHTML = "<li class='error'>Failed to load orders</li>";
     }
+}
+
+function viewOrderDetails(orderId) {
+    try {
+        const res = fetch("/orders");
+        res.then(r => r.json()).then(orders => {
+            const order = orders.find(o => o.order_id === orderId);
+            if (!order) {
+                alert("Order not found");
+                return;
+            }
+            
+            const itemsHtml = order.items.map(item => `
+                <div class="order-item-detail">
+                    <p><strong>Product ID:</strong> ${item.product_id}</p>
+                    <p><strong>Quantity:</strong> ${item.quantity}</p>
+                    <p><strong>Unit Price:</strong> $${Number(item.unit_price).toFixed(2)}</p>
+                    <p><strong>Subtotal:</strong> $${(item.quantity * item.unit_price).toFixed(2)}</p>
+                </div>
+            `).join("");
+            
+            const detailsContent = `
+                <p><strong>Order ID:</strong> ${order.order_id}</p>
+                <p><strong>Status:</strong> ${order.status}</p>
+                <p><strong>Date:</strong> ${new Date(order.created_at).toLocaleDateString()}</p>
+                <p><strong>Total Amount:</strong> $${Number(order.total).toFixed(2)}</p>
+                <h4>Items Ordered:</h4>
+                <div class="items-list">
+                    ${itemsHtml}
+                </div>
+            `;
+            
+            document.getElementById("order-details-content").innerHTML = detailsContent;
+            document.getElementById("order-details-modal").style.display = "block";
+        });
+    } catch (err) {
+        console.error("Error viewing order details:", err);
+    }
+}
+
+function closeOrderDetails() {
+    document.getElementById("order-details-modal").style.display = "none";
+}
+
+async function showUserDetails() {
+    try {
+        const res = await fetch("/user/profile");
+        if (!res.ok) {
+            // If endpoint doesn't exist, show stored user from session
+            const userId = localStorage.getItem("user_id");
+            const username = localStorage.getItem("user_username");
+            if (userId && username) {
+                document.getElementById("user-username").textContent = username;
+                document.getElementById("user-email").textContent = localStorage.getItem("user_email") || "Not provided";
+                
+                // Get orders count
+                const ordersRes = await fetch("/orders");
+                if (ordersRes.ok) {
+                    const orders = await ordersRes.json();
+                    document.getElementById("user-orders-count").textContent = orders.length;
+                }
+            }
+        } else {
+            const user = await res.json();
+            document.getElementById("user-username").textContent = user.username || "--";
+            document.getElementById("user-email").textContent = user.email || "Not provided";
+            document.getElementById("user-created").textContent = user.created_at ? new Date(user.created_at).toLocaleDateString() : "--";
+            document.getElementById("user-orders-count").textContent = user.orders_count || 0;
+        }
+        document.getElementById("user-details-modal").style.display = "block";
+    } catch (err) {
+        console.error("Error loading user details:", err);
+        alert("Could not load user details");
+    }
+}
+
+function closeUserDetails() {
+    document.getElementById("user-details-modal").style.display = "none";
 }
 
 async function deleteAllOrders() {

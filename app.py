@@ -114,7 +114,43 @@ def login():
             return jsonify({"error": "invalid credentials"}), 401
 
         session["user_id"] = row["user_id"]
-        return jsonify({"message": "login successful", "username": row["username"], "user_id": row["user_id"]}), 200
+        return jsonify({
+            "message": "login successful", 
+            "username": row["username"], 
+            "user_id": row["user_id"],
+            "email": row["email"]
+        }), 200
+    except Exception as e:
+        traceback.print_exc(file=sys.stderr)
+        return jsonify({"error": "internal error", "detail": str(e)}), 500
+
+@app.get("/user/profile")
+def get_user_profile():
+    try:
+        user_id = session.get("user_id")
+        if not user_id:
+            return jsonify({"error": "not logged in"}), 401
+        
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT user_id, username, email, created_at FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        
+        # Count orders for this user
+        cur.execute("SELECT COUNT(*) as cnt FROM orders WHERE user_id = ?", (user_id,))
+        orders_count = cur.fetchone()["cnt"]
+        conn.close()
+        
+        if not row:
+            return jsonify({"error": "user not found"}), 404
+        
+        return jsonify({
+            "user_id": row["user_id"],
+            "username": row["username"],
+            "email": row["email"],
+            "created_at": row["created_at"],
+            "orders_count": orders_count
+        }), 200
     except Exception as e:
         traceback.print_exc(file=sys.stderr)
         return jsonify({"error": "internal error", "detail": str(e)}), 500
