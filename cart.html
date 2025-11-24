@@ -2,14 +2,21 @@
 <html>
 <head>
     <meta charset="UTF-8">
-
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
 <body>
-    <h2>Shopping Cart</h2>
+    <div class="header">
+        <h2>Shopping Cart</h2>
+        <button onclick="window.location.href='products.html'" class="btn-nav">← Back to Products</button>
+    </div>
+    
     <div id="cart-container"></div>
-    <h3>Total: ₹<span id="total-amount">0</span></h3>
-    <button id="checkout-btn" onclick="checkout()">Place Order</button>
+    
+    <div class="cart-summary">
+        <h3>Total: $<span id="total-amount">0</span></h3>
+        <button id="checkout-btn" class="btn" onclick="checkoutCart()">Place Order</button>
+        <button class="btn-secondary" onclick="window.location.href='products.html'">Continue Shopping</button>
+    </div>
 </body>
 </html>

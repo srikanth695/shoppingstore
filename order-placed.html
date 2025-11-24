@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Placed</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="order-placed-container">
+        <div class="success-card">
+            <div class="success-icon">✓</div>
+            <h1>Order Placed Successfully!</h1>
+            
+            <div class="order-details">
+                <p>Thank you for your order.</p>
+                <p><strong>Order ID:</strong> <span id="order-id">--</span></p>
+                <p><strong>Status:</strong> <span id="order-status">placed</span></p>
+                <p>Your order has been confirmed and will be processed soon.</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn" onclick="window.location.href='products.html'">Continue Shopping</button>
+                <button class="btn" onclick="window.location.href='orders.html'">View My Orders</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Get order ID from URL parameter
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('order_id');
+            
+            if (orderId) {
+                document.getElementById("order-id").textContent = orderId;
+            }
+        });
+    </script>
+</body>
+</html>

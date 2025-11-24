@@ -7,7 +7,14 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <h2>Products</h2>
+    <div class="header">
+        <h2>Products</h2>
+        <div class="nav-buttons">
+            <button onclick="window.location.href='cart.html'" class="btn-nav">🛒 Cart (<span id="cart-count">0</span>)</button>
+            <button onclick="window.location.href='orders.html'" class="btn-nav">📦 Orders</button>
+            <button onclick="window.location.href='index.html'" class="btn-nav">Logout</button>
+        </div>
+    </div>
     <div id="product-list" class="product-container"></div>
 </body>
 </html>
